@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>校园通行码</title>
+    <style>
+        /* 全局重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Helvetica, Arial, sans-serif; 
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 375px;
+            background-color: #f5f5f5; 
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        /* 顶部导航栏 */
+        .browser-header {
+            /* 修改点1：顶部内边距减少 (10px -> 6px)，整体上移 */
+            padding: 6px 15px 0px 15px; 
+            display: flex;
+            flex-direction: column;
+            border-bottom: none; 
+            background: #f5f5f5; /* 保持灰色背景 */
+        }
+
+        .browser-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            color: #444;
+            margin-bottom: 0px; 
+            /* 确保这一行高度紧凑 */
+            height: 24px; 
+        }
+
+        /* 导航标题 */
+        .nav-title { 
+            font-weight: bold; 
+            font-size: 17px;
+            /* 微调位置，使其在视觉上与图标严格居中 */
+            position: relative;
+            top: 1px;
+ font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 650;
+        }
+
+        /* 修改点1：图标变细，使用普通字重 */
+        .nav-icon { 
+            font-size: 20px; 
+            color: #333; 
+            cursor: pointer;
+            font-weight: 400; /* 变细 */
+            font-family: sans-serif; /* 确保符号显示正常 */
+        }
+
+        .browser-url {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            /* 修改点1：紧贴上方标题 */
+            margin-top: -2px; 
+            line-height: 1.2;
+            padding-bottom: 5px;
+            /* 稍微缩小一点字号以匹配紧凑感，如果不想变小可改回12px */
+            font-size: 11px; 
+            transform: scale(0.95); /* 视觉上再小一点点，更像浏览器地址栏 */
+        }
+
+        /* 主卡片 */
+        .main-card {
+            margin: 15px;
+            border-radius: 12px; 
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: white; 
+            padding-bottom: 30px;
+        }
+
+        /* 顶部背景图区域 */
+        .card-header-bg {
+            background-image: url('2.png'); 
+            background-size: 100% 100%;
+            background-position: center;
+            height: 200px;
+            position: relative;
+            padding: 15px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .card-header-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(40, 110, 200, 0.15); 
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 校徽行 */
+        .school-badge-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .school-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.5); 
+            letter-spacing: 0.5px;
+            position: relative;
+            top: -6px; 
+            left: 4px; 
+        }
+
+        /* 个人信息行 */
+        .info-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 68%;
+        }
+
+        /* 修改点2：气泡更紧密 (Padding 减小) */
+        .info-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.65); 
+            border-radius: 8px; 
+            /* 上下2px, 左右8px -> 非常紧凑 */
+            padding: 4px 8px; 
+            font-size: 15px;
+            width: fit-content;
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+
+        .label {
+            color: #;
+            margin-right: 8px;
+            font-weight: 400;
+        }
+
+        .value {
+            color: #2A99FF;
+            font-weight: 600;
+        }
+
+        /* 头像区域 */
+        .avatar-box {
+            position: absolute;
+            top: 15px;
+            right: 2px;
+            width: 70px; 
+            height: 92px;
+            background: transparent;
+            border: none; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: visible; 
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 时间显示 */
+        .time-display {
+            text-align: center;
+            margin-top: 45px;
+            margin-bottom: 40px;
+            font-family: "Times New Roman", serif;
+            font-size: 30px; 
+            color: #a0a0a0;
+            letter-spacing: 1px;
+            font-weight: bold;
+ 	    transform: scale(0.95);
+        }
+
+        /* 二维码容器 */
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .qr-img {
+            width: 142px;
+            height: 142px;
+            border: none; 
+            margin-bottom: 10px;
+        }
+
+        .qr-text {
+            color: #999;
+            font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* 修改点3：核酸条上下间距变小 */
+        .test-bar {
+            margin: 0 15px;
+            background: white;
+            border-radius: 10px;
+            /* 上下内边距减小到 12px */
+            padding: 12px 20px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+            font-size: 15px;
+        }
+
+        .test-left { color: #bbb; }
+        
+        .test-right {
+            color: #aaa;
+            font-weight: 500; 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .refresh-icon { font-size: 16px; color: #888; }
+
+        /* 修改点4：校名上移 */
+        .footer-school-name {
+            text-align: center;
+            color: #777;
+            /* 间距减小 */
+            margin-top: 15px; 
+            font-size: 14px;
+            padding-bottom: 20px;
+ 	   font-weight: 500; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <header class="browser-header">
+            <div class="browser-top">
+                <span class="nav-icon">✕</span>
+                <span class="nav-title">校园通行码</span>
+                <span class="nav-icon">...</span>
+            </div>
+            <div class="browser-url">authserver.zjhu.edu.cn</div>
+        </header>
+
+        <div class="main-card">
+            <div class="card-header-bg">
+                <div class="header-content">
+                    <div class="school-badge-row">
+                        <img src="4.png" alt="Logo" class="school-logo">
+                        <span class="card-title">校园通行码-学生</span>
+                    </div>
+
+                    <div class="info-rows">
+                        <div class="info-item">
+                            <span class="label">姓名:</span>
+                            <span class="value">李若茜</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">学号:</span>
+                            <span class="value">2025385116</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">学院:</span>
+                            <span class="value">艺术学院</span>
+                        </div>
+                    </div>
+
+                    <div class="avatar-box">
+                        <img src="3.png" alt="头像" class="avatar-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="time-display" id="clock">
+                11月21日 23:03:31
+            </div>
+
+            <div class="qr-container">
+                <img src="1.png" alt="QR Code" class="qr-img">
+                <div class="qr-text">凭此码可在本校范围内通行</div>
+            </div>
+        </div>
+
+        <div class="test-bar">
+            <div class="test-left">无核酸记录</div>
+            <div class="test-right">
+    	     核酸检测 <span class="refresh-icon">⟳</span>
+            </div>
+        </div>
+
+        <div class="footer-school-name">
+            湖州师范学院
+        </div>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const timeString = `${month}月${date}日 ${hours}:${minutes}:${seconds}`;
+            document.getElementById('clock').innerText = timeString;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>
